@@ -1,0 +1,18 @@
+consul:
+  command: agent -server -advertise $HOST_IP -bootstrap
+  image: waieez/consul-ui:latest
+  hostname: serv-00
+  ports:
+    - "$HOST_IP:8400:8400"
+    - "$HOST_IP:8500:8500"
+    - "$HOST_IP:8600:8600/udp"
+    - "$HOST_IP:8600:8600"
+  volumes:
+    - /mnt/consul/config:/consul/config
+registrator:
+  image: gliderlabs/registrator:latest
+  links:
+    - consul
+  command: -ip $HOST_IP consul://$HOST_IP:8500
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
