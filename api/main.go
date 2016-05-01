@@ -8,7 +8,7 @@ import (
 
 func main() {
 	server := http.Server{}
-	server.Addr = ":8080"
+	server.Addr = ":80"
 	http.HandleFunc("/health", healthHandler)
 	err := server.ListenAndServe()
 	if err != nil {
