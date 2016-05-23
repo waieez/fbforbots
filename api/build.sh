@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 echo building binary
 env GOOS=linux GOARCH=amd64 go build -v
