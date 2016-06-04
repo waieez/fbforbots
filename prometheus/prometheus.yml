@@ -15,23 +15,13 @@ rule_files:
   # - "second.rules"
 
 # A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: 'prometheus'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
-    target_groups:
-      - targets: ['localhost:9090']
-      
-      
   - job_name: 'consul'
     scrape_interval: 5s
-    target_groups:
-        # need to figure out how to use service discovery?
-        - targets: ['192.168.99.100:9107']
+    consul_sd_configs:
+      - server: '192.168.99.100:8500'
+      
+    relabel_configs:
+      - source_labels: ['__meta_consul_tags']
+        regex: '(.*metrics.*)'
+        action: keep
