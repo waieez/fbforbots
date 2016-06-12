@@ -13,7 +13,7 @@ registrator:
   image: gliderlabs/registrator:latest
   links:
     - consul
-  command: -ip $HOST_IP -deregister on-success consul://$HOST_IP:8500
+  command: -ip $HOST_IP -deregister on-success consul://consul:8500
   volumes:
     - /var/run/docker.sock:/tmp/docker.sock
 prometheus:
@@ -29,3 +29,4 @@ api:
   ports: [80]
   environment:
     SERVICE_TAGS: metrics
+    SERVICE_CHECK_HTTP: /health
