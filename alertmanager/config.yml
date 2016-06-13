@@ -1,0 +1,14 @@
+global:
+  slack_api_url: 'https://hooks.slack.com/services/<secret>'
+templates: 
+- '/etc/alertmanager/template/*.tmpl'
+route:
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 3h
+  receiver: Slack
+receivers:
+  - name: Slack
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/<secret>'
+        channel: '#general'

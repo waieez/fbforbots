@@ -1,0 +1,8 @@
+ALERT Service_Unhealthy
+    IF consul_catalog_service_node_healthy == 0
+    FOR 1m
+    LABELS { severity = "slack" }
+    ANNOTATIONS {
+        summary = "Service {{ $labels.service }} unhealthy",
+        description = "Service {{ $labels.service }} has been down for more than 1 minute.",
+    }

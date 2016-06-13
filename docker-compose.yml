@@ -13,10 +13,11 @@ registrator:
   image: gliderlabs/registrator:latest
   links:
     - consul
-  command: -ip $HOST_IP -deregister on-success consul://$HOST_IP:8500
+  command: -ip $HOST_IP -deregister on-success consul://consul:8500
   volumes:
     - /var/run/docker.sock:/tmp/docker.sock
 prometheus:
+  command: '-config.file=/etc/prometheus/prometheus.yml -alertmanager.url=http://$HOST_IP:9093'
   image: prom/prometheus
   ports:
     - "$HOST_IP:9090:9090"
@@ -24,8 +25,23 @@ prometheus:
     - consul
   volumes:
     - ./prometheus:/etc/prometheus
+exporter:
+  command: -consul.server $HOST_IP:8500
+  image: prom/consul-exporter
+  ports:
+    - "$HOST_IP:9107:9107"
+  links:
+    - consul
+alertmanager:
+  command: -config.file=/etc/alertmanager/config.yml
+  image: prom/alertmanager
+  ports:
+    - "$HOST_IP:9093:9093"
+  volumes:
+    - ./alertmanager:/etc/alertmanager
 api:
   image: waieez/fbforbots-api:latest
   ports: [80]
   environment:
     SERVICE_TAGS: metrics
+    SERVICE_CHECK_HTTP: /health
