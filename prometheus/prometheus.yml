@@ -11,12 +11,17 @@ global:
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
-  # - "first.rules"
+  - "/etc/prometheus/*.rules"
   # - "second.rules"
 
 # A scrape configuration containing exactly one endpoint to scrape:
 scrape_configs:
   - job_name: 'consul'
+    scrape_interval: 5s
+    target_groups:
+        # need to figure out how to use service discovery?
+        - targets: ['192.168.99.100:9107']
+  - job_name: 'metrics'
     scrape_interval: 5s
     consul_sd_configs:
       - server: '192.168.99.100:8500'
@@ -25,3 +30,4 @@ scrape_configs:
       - source_labels: ['__meta_consul_tags']
         regex: '(.*metrics.*)'
         action: keep
+
